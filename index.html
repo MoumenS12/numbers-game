@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Numbers Game</title>
+
+<style>
+body{font-family:Arial,sans-serif;background:#f6f7fb;margin:0;padding:20px;text-align:center}
+.card{max-width:540px;margin:auto;background:white;padding:24px;border-radius:18px;box-shadow:0 8px 25px rgba(0,0,0,.1)}
+h1{margin-top:0}.q{font-size:23px;margin:18px 0}.pic{font-size:58px;line-height:1.5;margin:18px 0}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+button{font-size:20px;padding:14px;border:0;border-radius:12px;cursor:pointer;background:#e9ecf3}
+.good{background:#c8f7d4!important}.bad{background:#ffd0d0!important}
+#next{display:none;width:100%;margin-top:18px;background:#222;color:white}
+#msg{min-height:32px;font-size:20px;margin-top:16px}.small{font-size:15px;color:#555}
+</style>
+
+</head>
+<body>
+<div class="card">
+<h1>🔢 Numbers Game</h1>
+<div class="small">عدّ الصور ثم اختر الرقم الصحيح</div>
+<div id="game"></div><div id="msg"></div>
+<button id="next" onclick="nextQuestion()">السؤال التالي</button>
+</div>
+<script>
+const questions=[
+ {pic:"🍎 🍎 🍎 🍎 🍎 🍎 🍎",answer:"7",choices:["6","9","7","8"]},
+ {pic:"⭐ ⭐ ⭐",answer:"3",choices:["5","2","4","3"]},
+ {pic:"🐟 🐟 🐟 🐟 🐟 🐟 🐟 🐟 🐟",answer:"9",choices:["8","10","7","9"]},
+ {pic:"🌸 🌸 🌸 🌸 🌸",answer:"5",choices:["4","6","5","3"]},
+ {pic:"🍌 🍌 🍌 🍌 🍌 🍌 🍌 🍌 🍌 🍌",answer:"10",choices:["9","8","10","7"]}
+];
+</script>
+
+<script>
+let i=0,score=0,locked=false;
+function render(){
+ locked=false; msg.textContent=""; next.style.display="none";
+ const q=questions[i];
+ game.innerHTML=`<div class="q">السؤال ${i+1} من 5</div>
+ <div class="pic">${q.pic}</div>
+ <div class="answers">${q.choices.map(c=>`<button onclick="check(this,'${c}')">${c}</button>`).join("")}</div>`;
+}
+function check(btn,val){
+ if(locked)return; locked=true;
+ const correct=questions[i].answer;
+ [...document.querySelectorAll(".answers button")].forEach(b=>{if(b.textContent===correct)b.classList.add("good")});
+ if(val===correct){score++;msg.textContent="✅ Excellent!";}
+ else{btn.classList.add("bad");msg.textContent="❌ الإجابة الصحيحة بالأخضر.";}
+ next.style.display="block";
+ next.textContent=i===4?"إظهار النتيجة":"السؤال التالي";
+}
+function nextQuestion(){
+ i++;
+ if(i<questions.length)render();
+ else{
+  game.innerHTML=`<div class="q">🎉 انتهت اللعبة!</div>
+  <div style="font-size:30px;margin:25px 0">النتيجة: <b>${score} / 5</b></div>
+  <button onclick="location.reload()">العب مرة ثانية</button>`;
+  msg.textContent=score===5?"🌟 Perfect!":"👏 Good job!";
+  next.style.display="none";
+ }
+}
+render();
+</script>
+
+</body></html>
